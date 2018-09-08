@@ -1,0 +1,30 @@
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	var fillInternal = time.Millisecond * 10
+	var caplicity = 100
+	var tokenBucket = make(chan struct{}, caplicity)
+
+	fillToken := func() {
+		ticker := time.NewTicker(fillInternal)
+		for {
+			select {
+			case <-ticker.C:
+				select {
+				case tokenBucket <- struct{}{}:
+				default:
+				}
+				fmt.Println("current token cnt: ", len(tokenBucket), time.Now())
+			}
+
+		}
+	}
+
+	go fillToken()
+	time.Sleep(time.Hour)
+}
