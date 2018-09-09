@@ -28,3 +28,21 @@ func main() {
 	go fillToken()
 	time.Sleep(time.Hour)
 }
+
+// func TakeAvailabe(block bool) (takenResult bool) {
+// 	if block {
+// 		select {
+// 		case <-tokenBucket:
+// 			takenResult = true
+// 		}
+// 	} else {
+// 		select {
+// 		case <-tokenBucket:
+// 			takenResult = true
+// 		default:
+// 			takenResult = false
+// 		}
+// 	}
+
+// 	return
+// }
