@@ -75,7 +75,7 @@ func main() {
 
 	// set logger
 	db.LogMode(true)
-	db.SetLogger(gorm.Logger{revel.TRACE})
+	// db.SetLogger(gorm.Logger{revel.TRACE})
 	db.SetLogger(log.New(os.Stdout, "\r\n", 0))
 }
 
