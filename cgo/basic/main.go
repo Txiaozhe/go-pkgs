@@ -1,6 +1,6 @@
 package main
 
-//#include <stdio.h>
+// #include <stdio.h>
 import "C"
 
 func main() {
