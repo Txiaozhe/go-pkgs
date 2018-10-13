@@ -20,7 +20,7 @@ func EncodeFloatAscending(b []byte, f float64) []byte {
 	} else {
 		b = append(b, floatPos)
 	}
-	return EncodeFloatAscending(b, u)
+	return EncodeUint64Ascending(b, u)
 }
 
 // EncodeFloatDescending is the descending version of EncodeFloatAscending.
@@ -33,7 +33,7 @@ func EncodeFloatDescending(b []byte, f float64) []byte {
 
 // DecodeFloatAscending returns the remaining byte slice after decoding and the decoded
 // float64 from buf.
-func DescFloatAscending(buf []byte) ([]byte, float64, error) {
+func DecodeFloatAscending(buf []byte) ([]byte, float64, error) {
 	if PeekType(buf) != Float {
 		return buf, 0, errors.Errorf("did not find maker")
 	}
@@ -54,7 +54,7 @@ func DescFloatAscending(buf []byte) ([]byte, float64, error) {
 		if err != nil {
 			return b, 0, err
 		}
-		return nil, b, math.Float64frombits(u, nil)
+		return b, math.Float64frombits(u), nil
 	default:
 		return nil, 0, errors.Errorf("unknow perfix of the encoded byte slice: %q", buf)
 	}
@@ -62,6 +62,6 @@ func DescFloatAscending(buf []byte) ([]byte, float64, error) {
 
 //
 func DecodeFloatDescending(buf []byte) ([]byte, float64, error) {
-	b, r, err := DescFloatAscending(buf)
+	b, r, err := DecodeFloatAscending(buf)
 	return b, -r, err
 }
