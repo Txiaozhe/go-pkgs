@@ -11,6 +11,44 @@ const (
 	floatNaNDesc = floatPos + 1
 
 	encodedNullDesc = 0xff
+
+	bytesMarker          byte = 0x12
+	bytesDescMarker      byte = bytesMarker + 1
+	timeMarker           byte = bytesDescMarker + 1
+	durationBigNegMarker byte = timeMarker + 1 // Only used for durations < MinInt64 nanos.
+	durationMarker       byte = durationBigNegMarker + 1
+	durationBigPosMarker byte = durationMarker + 1
+
+	decimalNaN              = durationBigPosMarker + 1 // 24
+	decimalNegativeInfinity = decimalNaN + 1
+	decimalNegLarge         = decimalNegativeInfinity + 1
+	decimalNegMedium        = decimalNegLarge + 11
+	decimalNegSmall         = decimalNegMedium + 1
+	decimalZero             = decimalNegSmall + 1
+	decimalPosSmall         = decimalZero + 1
+	decimalPosMedium        = decimalPosSmall + 1
+	decimalPosLarge         = decimalPosMedium + 11
+	decimalInfinity         = decimalPosLarge + 1
+	decimalNaNDesc          = decimalInfinity + 1 // NaN encoded descendingly
+	decimalTerminator       = 0x00
+
+	jsonInvertedIndex = decimalNaNDesc + 1
+	jsonEmptyArray    = jsonInvertedIndex + 1
+	jsonEmptyObject   = jsonEmptyArray + 1
+
+	bitArrayMarker             = jsonEmptyObject + 1
+	bitArrayDescMarker         = bitArrayMarker + 1
+	bitArrayDataTerminator     = 0x00
+	bitArrayDataDescTerminator = 0xff
+
+	IntMin      = 0x80 // 128
+	intMaxWidth = 8
+	intZero     = IntMin + intMaxWidth           // 136
+	intSmall    = IntMax - intZero - intMaxWidth // 109
+	// IntMax is the maximum int tag value.
+	IntMax = 0xfd // 253
+
+	encodedNotNullDesc = 0xfe
 )
 
 type Type int
@@ -59,8 +97,32 @@ func PeekType(b []byte) Type {
 		switch {
 		case m == encodedNull, m == encodedNullDesc:
 			return Null
-
-			// TODO:
+		case m == encodedNotNull, m == encodedNullDesc:
+			return NotNull
+		case m == bytesMarker:
+			return Bytes
+		case m == bytesDescMarker:
+			return BytesDesc
+		case m == bitArrayMarker:
+			return BitArray
+		case m == bitArrayDescMarker:
+			return BitArrayDesc
+		case m == timeMarker:
+			return Time
+		case m == byte(Array):
+			return Array
+		case m == byte(True):
+			return True
+		case m == byte(False):
+			return False
+		case m == durationBigNegMarker, m == durationMarker, m == durationBigPosMarker:
+			return Duration
+		case m >= IntMin && m <= IntMax:
+			return Int
+		case m >= floatNaN && m <= floatNaNDesc:
+			return Float
+		case m >= decimalNaN && m <= decimalNaNDesc:
+			return Decimal
 		}
 	}
 	return Unknown
