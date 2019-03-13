@@ -9,8 +9,10 @@ import (
 	"github.com/go-kit/kit/endpoint"
 )
 
+// StringHandler struct
 type StringHandler struct{}
 
+// Uppercase uppercase
 func (StringHandler) Uppercase(s string) (string, error) {
 	if s == "" {
 		return "", errors.New("string is empty")
@@ -19,10 +21,12 @@ func (StringHandler) Uppercase(s string) (string, error) {
 	return strings.ToUpper(s), nil
 }
 
+// Count count
 func (StringHandler) Count(s string) int {
 	return len(s)
 }
 
+// MakeUppercaseEndpoint make endpoint
 func MakeUppercaseEndpoint(svc model.StringService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.UppercaseRequest)
@@ -41,6 +45,7 @@ func MakeUppercaseEndpoint(svc model.StringService) endpoint.Endpoint {
 	}
 }
 
+// MakeCountEndpoint make endpoint
 func MakeCountEndpoint(svc model.StringService) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(model.CountRequest)
